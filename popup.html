@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header>
+      <h1 class="logo">Hallpass</h1>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enabled-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value" id="today-reviews">0</span>
+        <span class="stat-label">Today</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="total-reviews">0</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="streak-days">0</span>
+        <span class="stat-label">Streak</span>
+      </div>
+    </div>
+
+    <div id="active-passes" class="passes"></div>
+
+    <a id="settings-link" class="settings-link">Open Settings</a>
+  </div>
+
+  <script src="src/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

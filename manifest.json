@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Hallpass",
+  "version": "1.0.0",
+  "description": "Applies spaced repetition learning by embedding forced flashcard reviews from your Anki decks before accessing commonly visited sites. Import .apkg decks, block distracting websites, and reinforce your knowledge with every visit.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "declarativeNetRequest",
+    "tabs",
+    "alarms",
+    "webNavigation"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "block.html",
+        "block.js",
+        "block.css",
+        "src/*",
+        "lib/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

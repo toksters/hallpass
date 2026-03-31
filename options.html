@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hallpass Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">Hallpass</h1>
+      <p class="subtitle">Settings</p>
+    </header>
+
+    <!-- Blocked Sites -->
+    <section class="section">
+      <h2>Blocked Sites</h2>
+      <div class="add-row">
+        <input type="text" id="site-input" placeholder="e.g. reddit.com" />
+        <button id="add-site-btn" class="btn-primary">Add Site</button>
+      </div>
+      <ul id="sites-list" class="item-list"></ul>
+      <p id="sites-empty" class="empty-text">No blocked sites. Add one above.</p>
+    </section>
+
+    <!-- Flashcard Decks -->
+    <section class="section">
+      <h2>Flashcard Decks</h2>
+      <div class="import-row">
+        <label class="file-label" for="deck-file">
+          <span>Import .apkg Deck</span>
+          <input type="file" id="deck-file" accept=".apkg" />
+        </label>
+      </div>
+      <div id="import-progress" class="progress" style="display: none;">
+        <div id="progress-bar" class="progress-fill"></div>
+        <span id="progress-text">Importing...</span>
+      </div>
+      <div id="field-picker" class="field-picker" style="display: none;">
+        <h3>Select Fields</h3>
+        <p class="field-picker-desc">Choose which fields to use as the question and answer.</p>
+        <div class="field-picker-row">
+          <label for="front-field">Question (front) <span class="info-tooltip">ⓘ<span class="info-tooltip-text">The field shown as the prompt on the block page. You type the corresponding answer to proceed.</span></span></label>
+          <select id="front-field"></select>
+        </div>
+        <div class="field-picker-row">
+          <label for="back-field">Answer (back) <span class="info-tooltip">ⓘ<span class="info-tooltip-text">The field your typed response is checked against. If the field has multiple definitions separated by commas, any one is accepted. Parenthetical notes like (formal) are ignored.</span></span></label>
+          <select id="back-field"></select>
+        </div>
+        <div id="field-preview" class="field-preview"></div>
+        <div class="display-fields-section">
+          <p class="field-picker-desc">Fields to show when answered correctly:</p>
+          <div id="display-fields-checklist" class="display-fields-checklist"></div>
+        </div>
+        <div class="field-picker-actions">
+          <button id="cancel-import-btn" class="btn-secondary-sm">Cancel</button>
+          <button id="confirm-import-btn" class="btn-primary">Import</button>
+        </div>
+      </div>
+      <ul id="decks-list" class="item-list"></ul>
+      <p id="decks-empty" class="empty-text">No decks imported. Download one from <a href="https://ankiweb.net/shared/decks" target="_blank">AnkiWeb</a>.</p>
+    </section>
+
+    <!-- General Settings -->
+    <section class="section">
+      <h2>General</h2>
+      <div class="setting-row">
+        <label for="cards-required">Cards required per pass <span class="info-tooltip">ⓘ<span class="info-tooltip-text">How many flashcards you must answer correctly before gaining temporary access to blocked sites.</span></span></label>
+        <input type="number" id="cards-required" min="1" max="10" value="1" />
+      </div>
+      <div class="setting-row">
+        <label for="pass-duration">Pass duration (minutes) <span class="info-tooltip">ⓘ<span class="info-tooltip-text">How long access lasts after answering correctly. Once expired, you'll need to answer again.</span></span></label>
+        <input type="number" id="pass-duration" min="1" max="480" value="30" />
+      </div>
+    </section>
+  </div>
+
+  <script src="lib/jszip.min.js"></script>
+  <script src="lib/sql-wasm.js"></script>
+  <script src="src/storage.js"></script>
+  <script src="src/srs.js"></script>
+  <script src="src/apkg-parser.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
