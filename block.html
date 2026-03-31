@@ -34,8 +34,20 @@
             <div id="card-front" class="card-front"></div>
 
             <div id="correct-overlay" class="correct-overlay" style="display: none;">
-              <div class="correct-heading">Correct!</div>
+              <div class="correct-heading">Correct!
+                <button id="edit-answer-btn" class="btn-edit-answer" title="Edit answer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                </button>
+              </div>
               <div id="correct-fields" class="correct-fields"></div>
+              <div id="edit-answer-form" class="edit-answer-form" style="display: none;">
+                <label class="edit-answer-label">Accepted answer:</label>
+                <input type="text" id="edit-answer-input" class="edit-answer-input" />
+                <div class="edit-answer-actions">
+                  <button id="edit-answer-cancel" class="btn-secondary-sm">Cancel</button>
+                  <button id="edit-answer-save" class="btn-primary-sm">Save</button>
+                </div>
+              </div>
               <div class="countdown-track">
                 <div id="countdown-bar" class="countdown-bar"></div>
               </div>
@@ -61,8 +73,21 @@
           </div>
 
           <div id="answer-revealed" class="answer-revealed" style="display: none;">
-            <div class="card-label">Answer:</div>
+            <div class="answer-revealed-header">
+              <div class="card-label">Answer:</div>
+              <button id="edit-revealed-btn" class="btn-edit-answer" title="Edit answer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+              </button>
+            </div>
             <div id="card-back"></div>
+            <div id="edit-revealed-form" class="edit-answer-form" style="display: none;">
+              <label class="edit-answer-label">Accepted answer:</label>
+              <input type="text" id="edit-revealed-input" class="edit-answer-input" />
+              <div class="edit-answer-actions">
+                <button id="edit-revealed-cancel" class="btn-secondary-sm">Cancel</button>
+                <button id="edit-revealed-save" class="btn-primary-sm">Save</button>
+              </div>
+            </div>
             <button id="continue-btn" class="btn-primary">I see, continue</button>
           </div>
         </div>

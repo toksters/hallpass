@@ -28,6 +28,20 @@
   const summaryCardsEl = document.getElementById('summary-cards');
   const summarySiteEl = document.getElementById('summary-site');
 
+  // Edit answer elements (correct overlay)
+  const editAnswerBtn = document.getElementById('edit-answer-btn');
+  const editAnswerForm = document.getElementById('edit-answer-form');
+  const editAnswerInput = document.getElementById('edit-answer-input');
+  const editAnswerCancel = document.getElementById('edit-answer-cancel');
+  const editAnswerSave = document.getElementById('edit-answer-save');
+
+  // Edit answer elements (answer revealed)
+  const editRevealedBtn = document.getElementById('edit-revealed-btn');
+  const editRevealedForm = document.getElementById('edit-revealed-form');
+  const editRevealedInput = document.getElementById('edit-revealed-input');
+  const editRevealedCancel = document.getElementById('edit-revealed-cancel');
+  const editRevealedSave = document.getElementById('edit-revealed-save');
+
   // State
   let currentCard = null;
   let wrongAttempts = 0;
@@ -35,6 +49,8 @@
   let cardsRequired = 1;
   let cardsAnswered = 0;
   let countdownTimer = null;
+  let countdownRemaining = 0;
+  let countdownStartedAt = 0;
   const completedCardData = [];
   const DISPLAY_DURATION = 5000; // 5 seconds
 
@@ -127,6 +143,10 @@
     showAnswerContainer.style.display = 'none';
     answerRevealed.style.display = 'none';
     correctOverlay.style.display = 'none';
+    editAnswerForm.style.display = 'none';
+    editAnswerBtn.style.display = '';
+    editRevealedForm.style.display = 'none';
+    editRevealedBtn.style.display = '';
     cardFrontEl.style.display = '';
     cardFrontEl.previousElementSibling.style.display = '';
     answerForm.style.display = 'flex';
@@ -247,14 +267,100 @@
     countdownBar.style.transition = `width ${DISPLAY_DURATION}ms linear`;
     countdownBar.style.width = '0%';
 
+    countdownRemaining = DISPLAY_DURATION;
+    countdownStartedAt = Date.now();
     countdownTimer = setTimeout(advanceAfterCorrect, DISPLAY_DURATION);
   }
+
+  // --- Edit Answer (correct overlay) ---
+
+  function pauseCountdown() {
+    if (countdownTimer) {
+      clearTimeout(countdownTimer);
+      countdownTimer = null;
+      countdownRemaining = Math.max(0, countdownRemaining - (Date.now() - countdownStartedAt));
+      countdownBar.style.transition = 'none';
+      countdownBar.style.width = `${(countdownRemaining / DISPLAY_DURATION) * 100}%`;
+    }
+  }
+
+  function resumeCountdown() {
+    if (countdownRemaining > 0) {
+      countdownBar.offsetWidth; // force reflow
+      countdownBar.style.transition = `width ${countdownRemaining}ms linear`;
+      countdownBar.style.width = '0%';
+      countdownStartedAt = Date.now();
+      countdownTimer = setTimeout(advanceAfterCorrect, countdownRemaining);
+    }
+  }
+
+  async function saveAnswer(newValue) {
+    currentCard.card.back = newValue;
+    await hallpassStorage.update('hp_cards', cards => {
+      if (cards[currentCard.id]) cards[currentCard.id].back = newValue;
+      return cards;
+    });
+  }
+
+  editAnswerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pauseCountdown();
+    editAnswerInput.value = stripHtml(currentCard.card.back);
+    editAnswerForm.style.display = 'block';
+    editAnswerBtn.style.display = 'none';
+    editAnswerInput.focus();
+  });
+
+  editAnswerCancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    editAnswerForm.style.display = 'none';
+    editAnswerBtn.style.display = '';
+    resumeCountdown();
+  });
+
+  editAnswerSave.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const newValue = editAnswerInput.value.trim();
+    if (newValue) {
+      await saveAnswer(newValue);
+    }
+    editAnswerForm.style.display = 'none';
+    editAnswerBtn.style.display = '';
+    resumeCountdown();
+  });
+
+  // Prevent clicks on edit form from advancing
+  editAnswerForm.addEventListener('click', (e) => e.stopPropagation());
+
+  // --- Edit Answer (answer revealed) ---
+
+  editRevealedBtn.addEventListener('click', () => {
+    editRevealedInput.value = stripHtml(currentCard.card.back);
+    editRevealedForm.style.display = 'block';
+    editRevealedBtn.style.display = 'none';
+    editRevealedInput.focus();
+  });
+
+  editRevealedCancel.addEventListener('click', () => {
+    editRevealedForm.style.display = 'none';
+    editRevealedBtn.style.display = '';
+  });
+
+  editRevealedSave.addEventListener('click', async () => {
+    const newValue = editRevealedInput.value.trim();
+    if (newValue) {
+      await saveAnswer(newValue);
+      cardBackEl.textContent = newValue;
+    }
+    editRevealedForm.style.display = 'none';
+    editRevealedBtn.style.display = '';
+  });
 
   // Click overlay or press Enter to skip countdown
   correctOverlay.addEventListener('click', advanceAfterCorrect);
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && correctOverlay.style.display === 'flex') {
+    if (e.key === 'Enter' && correctOverlay.style.display === 'flex' && editAnswerForm.style.display === 'none') {
       advanceAfterCorrect();
     }
   });
