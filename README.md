@@ -7,7 +7,7 @@
   <img src="success-screen.png" width="380" alt="Correct answer screen" />
 </p>
 <p align="center">
-  <img src="popup.png" width="220" alt="Extension popup with stats" />
+  <img src="popup.jpg" width="220" alt="Extension popup with stats" />
   <img src="settings.png" width="380" alt="Settings page" />
 </p>
 
