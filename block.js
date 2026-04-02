@@ -219,6 +219,24 @@
     }
   }
 
+  function renderCorrectFields() {
+    const fields = currentCard.card.displayFields;
+    if (fields && fields.length > 0) {
+      correctFieldsEl.innerHTML = fields.map(f =>
+        `<div class="correct-field"${f.role ? ` data-role="${f.role}"` : ''}>
+          <div class="correct-field-label">${escapeHtml(f.name)}</div>
+          <div class="correct-field-value">${f.value}</div>
+        </div>`
+      ).join('');
+    } else {
+      correctFieldsEl.innerHTML =
+        `<div class="correct-field">
+          <div class="correct-field-label">Answer</div>
+          <div class="correct-field-value">${currentCard.card.back}</div>
+        </div>`;
+    }
+  }
+
   async function handleCorrect() {
     const responseTime = Date.now() - startTime;
     const quality = hallpassSRS.inferQuality(responseTime, wrongAttempts);
@@ -240,23 +258,7 @@
     cardFrontEl.style.display = 'none';
     cardFrontEl.previousElementSibling.style.display = 'none'; // hide "Translate / Answer:" label
 
-    // Build display fields HTML
-    const fields = currentCard.card.displayFields;
-    if (fields && fields.length > 0) {
-      correctFieldsEl.innerHTML = fields.map(f =>
-        `<div class="correct-field"${f.role ? ` data-role="${f.role}"` : ''}>
-          <div class="correct-field-label">${escapeHtml(f.name)}</div>
-          <div class="correct-field-value">${f.value}</div>
-        </div>`
-      ).join('');
-    } else {
-      // Fallback: just show the back field
-      correctFieldsEl.innerHTML =
-        `<div class="correct-field">
-          <div class="correct-field-label">Answer</div>
-          <div class="correct-field-value">${currentCard.card.back}</div>
-        </div>`;
-    }
+    renderCorrectFields();
     correctOverlay.style.display = 'flex';
 
     // Animate countdown bar
@@ -296,8 +298,18 @@
 
   async function saveAnswer(newValue) {
     currentCard.card.back = newValue;
+    if (currentCard.card.displayFields) {
+      const backField = currentCard.card.displayFields.find(f => f.role === 'back');
+      if (backField) backField.value = newValue;
+    }
     await hallpassStorage.update('hp_cards', cards => {
-      if (cards[currentCard.id]) cards[currentCard.id].back = newValue;
+      if (cards[currentCard.id]) {
+        cards[currentCard.id].back = newValue;
+        if (cards[currentCard.id].displayFields) {
+          const backField = cards[currentCard.id].displayFields.find(f => f.role === 'back');
+          if (backField) backField.value = newValue;
+        }
+      }
       return cards;
     });
   }
@@ -323,6 +335,7 @@
     const newValue = editAnswerInput.value.trim();
     if (newValue) {
       await saveAnswer(newValue);
+      renderCorrectFields();
     }
     editAnswerForm.style.display = 'none';
     editAnswerBtn.style.display = '';
